@@ -1,0 +1,24 @@
+h1. README
+
+h2. Overview
+
+This project will try and solve the very simple genetic algorithm problem
+described in this site:
+http://www.ai-junkie.com/ga/intro/gat3.html
+
+That is to use a GA to construct a genotype consisting of alternative 
+numbers and mathematical operators to reach a target number.
+
+h2. Planning
+
+What do we need:
+
+Object: Genes which are encodings of number and operators
+Object: A genotype which consists of a string of genes
+
+Function: For evaluating genotypes to make the phenotype
+Function: For determining the fitness of a phenotype
+
+Function: For selecting the genotypes to mate
+Function: For mating genotypes to produce the next generation
+
