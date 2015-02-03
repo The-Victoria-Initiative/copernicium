@@ -1,0 +1,12 @@
+parameter,value
+always_best,True
+board_height,400
+board_width,400
+circles,20
+genotypes,100
+max_generations,1000
+mutation_chance,0.2
+mutation_width,0.1
+radius,30
+relative_width,True
+verbose,False

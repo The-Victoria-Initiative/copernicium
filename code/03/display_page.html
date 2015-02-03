@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  
+  <!-- Bootstrap styling -->
+  <!-- <link href="http://nounr.com/static/bootstrap-3.2.0-dist/css/bootstrap.css" rel="stylesheet"> -->
+  <link href="/Analysis/web/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin: auto;
+      position: relative;
+      width: 960px;
+    }
+
+    circle {
+      fill:    none;
+      stroke:  steelblue;
+      stroke-width: 2px;
+    }
+
+    line {
+      stroke: red;
+      stroke-width: 2px;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .line {
+      fill: none;
+      stroke: steelblue;
+      stroke-width: 1.5px;
+    }
+
+    .gene {
+      fill: green;
+    }
+
+    text {
+      fill: black;
+    }
+
+    div.tooltip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <header class="mastheader row" id="header">
+      <div class="span12">
+        <div class="page-header">
+          <h1>Copernicium <small>v.03</small></h1>
+        </div>
+      </div>
+    </header>
+
+    <!-- This is where we will draw the visualisation -->
+    <div class="row">
+      <div class="col-md-5">
+        <div id="board"></div>  
+      </div>
+      <div class="col-md-7">
+        <div id="scores"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div id="genotype"></div>  
+      </div>
+    </div>
+  </div>
+  <!--
+  <script type="text/javascript" src="/static/bootstrap-3.2.0-dist/js/bootstrap.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script> 
+  -->
+  <script type="text/javascript" src="/Analysis/web/bootstrap/js/bootstrap.js"></script>
+  <script src="/Analysis/web/static/d3_static/d3.min.js"></script>
+  <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/03/draw_board.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/03/draw_path.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/03/draw_scores.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/03/draw_genotype.js"></script>
+
+</body>
+</html>
