@@ -24,10 +24,5 @@ d3.csv("board_setup.csv", function(error, data) {
      .attr("cx", function(d) {return d.x;})
      .attr("cy", function(d) {return d.y;})
      .attr("r",  function(d) {return d.r;})
-     .attr("fill", function(d) {
-      if (d.c == "a"){
-        return "red";
-      }
-      return "steelblue";
-     });
+     .attr("class", function(d) {return d.c;})
 });

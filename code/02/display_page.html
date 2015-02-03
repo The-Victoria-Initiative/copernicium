@@ -3,7 +3,8 @@
 <head>
   
   <!-- Bootstrap styling -->
-  <link href="http://nounr.com/static/bootstrap-3.2.0-dist/css/bootstrap.css" rel="stylesheet">
+  <!-- <link href="http://nounr.com/static/bootstrap-3.2.0-dist/css/bootstrap.css" rel="stylesheet"> -->
+  <link href="/Analysis/web/bootstrap/css/bootstrap.css" rel="stylesheet">
 
   <style>
     body {
@@ -13,8 +14,22 @@
       width: 960px;
     }
 
-    circle {
+    circle.b {
+      fill:    steelblue;
       opacity: 0.7;
+    }
+
+    circle.a {
+      fill: red;
+      opacity: 0.5;
+      stroke: black;
+      stroke-width: 2;
+    }
+    circle.c {
+      fill: purple;
+      opacity: 0.2;
+      stroke: black;
+      stroke-width: 2;
     }
 
     .axis path,
@@ -28,6 +43,11 @@
       fill: none;
       stroke: steelblue;
       stroke-width: 1.5px;
+    }
+
+    line.best{
+      stroke: red;
+      stroke-width: 2px;
     }
   </style>
 </head>
@@ -50,10 +70,39 @@
         <div id="scores"></div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Parameters used</h3>
+          </div>
+          <div class="panel-body">
+            <ul id="parameters">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Results</h3>
+          </div>
+          <div class="panel-body">
+            <ul id="results">
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <!--
   <script type="text/javascript" src="/static/bootstrap-3.2.0-dist/js/bootstrap.js"></script>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="draw_board.js"></script>
-  <script src="draw_scores.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script> 
+  -->
+  <script type="text/javascript" src="/Analysis/web/bootstrap/js/bootstrap.js"></script>
+  <script src="/Analysis/web/static/d3_static/d3.min.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/02/draw_board.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/02/draw_scores.js"></script>
+  <script src="/VictoriaInitiative/copernicium/code/02/fill_parameters.js"></script>
 </body>
 </html>

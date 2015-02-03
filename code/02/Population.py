@@ -4,13 +4,23 @@ class Population():
     from random import random
     import Tools
 
-    def __init__(self, fitness_measure, n_genotypes=8, verbose=True):
-        self.verbose     = verbose
+    def __init__(self, fitness_measure, 
+                 n_genotypes=8, always_best=False, 
+                 mutation_chance=0.2, width=0.1, relative_width=True,
+                 verbose=True):
+        # Parameters
+        self.verbose         = verbose
         self.fitness_measure = fitness_measure
-        self.n_genotypes = n_genotypes
-        self.generation  = 0
-        self.fitness     = []
-        self.fitness_pairs = []
+        self.n_genotypes     = n_genotypes
+        self.initial_radius  = 30
+        self.always_best     = always_best
+        self.mutation_chance = mutation_chance
+        self.width           = width
+        self.relative_width  = relative_width
+        # Counters etc
+        self.generation      = 0
+        self.fitness         = []
+        self.fitness_pairs   = []
         self.generate_population()
         self.eval()
         while (max(self.fitness) < 1):
@@ -19,7 +29,7 @@ class Population():
 
     def generate_population(self):
         genotypes = []
-        seed_circles = self.Tools.FillBoard(self.fitness_measure.board,self.n_genotypes,30)
+        seed_circles = self.Tools.FillBoard(self.fitness_measure.board,self.n_genotypes,self.initial_radius)
 
         for i in range(self.n_genotypes):
             genes = []
@@ -38,10 +48,10 @@ class Population():
             self.fitness[i] = self.fitness_measure.eval(self.genotypes[i].eval())
             self.fitness_pairs[i] = (self.fitness[i],i)
 
-    def select_fittest(self,always_best=True):
+    def select_fittest(self):
         self.make_fitness_bins()
 
-        if always_best:
+        if self.always_best:
             self.fitness_pairs.sort()
             first_candidate = self.fitness_pairs[-1][1]
             # second_candidate = self.fitness_pairs[-2][1]
@@ -74,7 +84,7 @@ class Population():
         self.fitness_bins = bins
 
     def breed(self, genotypes):
-        return genotypes[0].breed(genotypes[1])
+        return genotypes[0].breed(genotypes[1], mutation_chance=self.mutation_chance,width=self.width,relative_width=self.relative_width)
 
     def breed_next_generation(self,genotypes,parents_live=True):
         # print genotypes

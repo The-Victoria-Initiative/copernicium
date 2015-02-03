@@ -32,9 +32,10 @@ class Gene():
                 tmp = self.code[:i]+"0"+self.code[i+1:]
             self.code = tmp
 
-    def numerical_mutate(self,mutation_chance=0.1,width=10):
+    def numerical_mutate(self,mutation_chance=0.1,width=0.1,relative_width=True):
         if self.random() > mutation_chance: return
         this_as_int = int(self.code, 2)
+        if relative_width: width = this_as_int*relative_width
         mutated = max(0,int(self.gauss(this_as_int,width)))
         self.code = ('{0:0%ib}'%self.n_base).format(mutated)
 

@@ -18,12 +18,12 @@ class CircleGenotype(Genotype):
         r_code = self.genes[2].code
         return Circle(int(x_code, 2), int(y_code, 2), int(r_code, 2),name=self.name,c="a")
 
-    def breed(self,mate):
+    def breed(self,mate,mutation_chance=0.2,width=0.1,relative_width=True):
         genes = []
         assert len(self.genes) == len(mate.genes), "Mismatched number of genes, self: %i, mate: %i"%(len(self.genes),len(mate.genes))
         for i in range(len(self.genes)):
             if (self.random() < 0.5): genes.append(copy.copy(self.genes[i]))
             else:                     genes.append(copy.copy(mate.genes[i]))
         offspring = CircleGenotype(genes=genes)
-        offspring.numerical_mutate()
+        offspring.numerical_mutate(mutation_chance=mutation_chance,width=width,relative_width=relative_width)
         return offspring

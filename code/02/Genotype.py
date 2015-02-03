@@ -25,10 +25,10 @@ class Genotype():
             # print i
             self.genes[i].mutate(mutation_chance=mutation_chance)
 
-    def numerical_mutate(self,mutation_chance=0.2):
+    def numerical_mutate(self,mutation_chance=0.2,width=0.1,relative_width=True):
         for i in range(len(self.genes)):
             # print i
-            self.genes[i].numerical_mutate(mutation_chance=mutation_chance)
+            self.genes[i].numerical_mutate(mutation_chance=mutation_chance,width=width,relative_width=relative_width)
 
     def __repr__(self):
         return "genot: %s, %i genes: %s"%(self.name,self.n_genes,repr(self.genes))
