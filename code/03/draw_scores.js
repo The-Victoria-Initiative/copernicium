@@ -25,7 +25,7 @@ focus = svg.append("g").style("display", "none"); // defaults to off
 var bisectDate = d3.bisector(function(d) { return d.generation; }).left;
 
 
-d3.csv("evolution.csv", function(error, data) {
+d3.json("evolution.json", function(error, data) {
   x.domain(d3.extent(data, function(d) { return parseFloat(d.generation); }));
   var y_max = d3.max(data, function(d) { return parseFloat(d.score); });
   y.domain([0, y_max*1.2]);
@@ -109,10 +109,10 @@ d3.csv("evolution.csv", function(error, data) {
         .attr("y1", height)
         .attr("y2", y(d.score));
 
-    // board_svg.selectAll("circle").filter(".a")
-    //          .attr("cx",d.x)
-    //          .attr("cy",d.y)
-    //          .attr("r", d.r);
+    board_svg.selectAll(".journey")
+             .attr("d",d.path);
+
+    draw_genotype(d.genes);
   }
 });
 

@@ -33,7 +33,7 @@ def WritePointsToCSV(points,file_name):
         output_file.write(l+"\n")
     output_file.close()
 
-def WritePathToFile(path,points,file_name):
+def WriteLineToFile(path,points,file_name):
     lines = []
     lines.append("x1,y1,x2,y2")
     for i in range(len(path)):
@@ -41,6 +41,39 @@ def WritePathToFile(path,points,file_name):
         this_from = points[path[i-1]]
         this_to   = points[path[i]]
         lines.append("%f,%f,%f,%f"%(this_from.x,this_from.y,this_to.x,this_to.y))
+    output_file = open(file_name,"w")
+    for l in lines:
+        output_file.write(l+"\n")
+    output_file.close()
+
+def WritePathToFile(path,points,file_name):
+    lines = []
+    lines.append("path")
+    svg = ""
+    for i in range(len(path)):
+        p = points[path[i]]
+        c = "L"
+        if i == 0: c = "M"
+        svg += "%s%f %f "%(c,p.x,p.y)
+    lines.append(svg[:-1])
+        
+    output_file = open(file_name,"w")
+    for l in lines:
+        output_file.write(l+"\n")
+    output_file.close()
+
+def WritePathsToFile(paths,points,file_name):
+    lines = []
+    lines.append("path")
+    for path in paths:
+        svg = ""
+        for i in range(len(path)):
+            p = points[path[i]]
+            c = "L"
+            if i == 0: c = "M"
+            svg += "%s%f %f "%(c,p.x,p.y)
+        lines.append(svg[:-1])
+        
     output_file = open(file_name,"w")
     for l in lines:
         output_file.write(l+"\n")
@@ -63,15 +96,42 @@ def MinBases(n):
             return i
         i+=1
 
-def WriteGenotypeToJSON(genotype, file_name, fitness=False):
+def WriteGenotypeToJSON(genotype, file_name, coding=False):
     g_dict = {}
     g_dict["genes"] = []
-    for gene in genotype.genes:
-        g_dict["genes"].append({"code":gene.code,"number":int(gene.code, 2)})
+    for i,gene in enumerate(genotype.genes):
+        if coding: g_dict["genes"].append({"code":gene.code,"number":int(gene.code, 2),"in_use":coding[i]})
+        else:      g_dict["genes"].append({"code":gene.code,"number":int(gene.code, 2),"in_use":True})
     output_file = open(file_name,"w")
     output_file.write(json.dumps(g_dict)+"\n")
     output_file.close()
 
+def WriteEvolutionToJSON(evo, points, fitness, file_name):
+    evolution = []
+    for gen,e in enumerate(evo):
+        print gen,e
+        g_dict = {}
+        g_dict["generation"] = gen
+
+        path = fitness.eval(e[0].eval())[1]
+        svg = ""
+        for i in range(len(path)):
+            p = points[path[i]]
+            c = "L"
+            if i == 0: c = "M"
+            svg += "%s%f %f "%(c,p.x,p.y)
+        g_dict["path"] = svg
+
+        g_dict["genes"] = []
+        print len(e[0].genes),e[0].genes
+        print len(e[2]),e[2]
+        for i,gene in enumerate(e[0].genes):
+            g_dict["genes"].append({"code":gene.code,"number":int(gene.code, 2),"in_use":e[2][i]})
+        g_dict["score"] = e[1]
+        evolution.append(g_dict)
+    output_file = open(file_name,"w")
+    output_file.write(json.dumps(evolution)+"\n")
+    output_file.close()
 # def WriteParametersToFile(parameters,file_name):
 #     lines = []
 #     lines.append("parameter,value")

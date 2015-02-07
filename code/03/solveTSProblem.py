@@ -45,14 +45,13 @@ Population.Population(fitness,
                       always_best=options.always_best,
                       verbose=options.verbose)
 generation = 0
-best_paths = []
-scores     = []
+evolution  = []
 ###################
 print "run  : --- Running"
 ga_start = time.time()
 while(True):
     generation +=1
-    if (options.max_generations != -1) and (generation >= options.max_generations): break
+    if (options.max_generations != -1) and (generation > options.max_generations): break
     
     if options.verbose or (generation%100 == 0):
         print "run  :     generation[%i]"%generation
@@ -62,8 +61,9 @@ while(True):
 
     if options.verbose: print "run  :     selecting fittest"
     fittest = population.select_fittest()
-    best_paths.append(fitness.eval((fittest[0].eval()))[1])
-    scores.append(1. / (max(population.fitness)))
+    evolution.append((fittest[0],
+                     (1. / (max(population.fitness))),
+                     fitness.eval((fittest[0].eval()),return_coding=True)))
     # if (best_result > threshold): break
 
     if options.verbose: print "run  :     breeding: %s and %s"%(fittest[0].name,fittest[1].name)
@@ -75,8 +75,10 @@ print population
 best_result = max(population.fitness)
 fittest = population.select_fittest()
 best_path   = fitness.eval((fittest[0].eval()))[1]
+coding_used = fitness.eval((fittest[0].eval()),return_coding=True)
 print "run  : final generation[%i], best result: %f"%(generation, 1. / best_result)
 print "run  : solution: %s"%repr(fittest[0])
+print "run  :           ",coding_used
 print "run  :           ",best_path
 print "run  : time taken: %.2f s"%(ga_end-ga_start)
 # ###################
@@ -96,12 +98,12 @@ file_name = "path.csv"
 Tools.WritePathToFile(best_path,points,file_name)
 
 print "run  : --- Write scores to file"
-file_name = "evolution.csv"
-Tools.WriteScoresToFile(scores,file_name)
+file_name = "evolution.json"
+Tools.WriteEvolutionToJSON(evolution,points,fitness,file_name)
 
 print "run  : --- Write genotype to file"
 file_name = "genotype.json"
-Tools.WriteGenotypeToJSON(fittest[0],file_name)
+Tools.WriteGenotypeToJSON(fittest[0],file_name,coding=coding_used)
 
 # print "run  : --- Write evolution of path to file"
 # file_name = "evolution.csv"

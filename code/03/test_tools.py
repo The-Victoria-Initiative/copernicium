@@ -22,9 +22,11 @@ bases = Tools.MinBases(n_points)
 print "test : points: %i, bases: %i (2^%i = %i)"%(n_points,bases,bases,2**bases)
 ###################
 print "test : --- Write a path to a file"
-path = [0,1,2]
-file_name = "path.csv"
-Tools.WritePathToFile(path,points,file_name)
+paths = []
+paths.append([0,1,2])
+paths.append([2,1,2])
+file_name = "paths.csv"
+Tools.WritePathsToFile(paths,points,file_name)
 ###################
 print "test : --- Write genotype to file"
 import TSGenotype
