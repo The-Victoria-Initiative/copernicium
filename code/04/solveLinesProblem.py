@@ -77,10 +77,10 @@ while(True):
     if options.verbose: print "run  :     selecting fittest"
     fittest = population.select_fittest(force_always_best=True)[0]
     best_canvas = population.generate_canvas(fittest)
-    evolution.append((fittest,
-                      max(population.fitness),
-                      best_canvas,
-                      fittest.genes))
+    # evolution.append((fittest,
+    #                   max(population.fitness),
+    #                   best_canvas,
+    #                   fittest.genes))
     # if (best_result > threshold): break
 
     if options.verbose: print "run  :     fittest: %s"%(fittest.name)

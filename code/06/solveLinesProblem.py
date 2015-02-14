@@ -3,12 +3,11 @@ print "run  : --- Match a pattern with a genetic algorithm"
 ###################
 from optparse import OptionParser
 parser = OptionParser()
-parser.add_option("-p", "--pattern",         help="pattern to draw",                 action="store", type=str,   dest="pattern",         default="jess_128")
-parser.add_option("-s", "--suffix",          help="save suffix",                     action="store", type=str,   dest="suffix",          default="default")
+parser.add_option("-W", "--width",           help="width",                           action="store", type=int,   dest="width",           default=32)
+parser.add_option("-H", "--height",          help="height",                          action="store", type=int,   dest="height",          default=32)
+parser.add_option("-p", "--pattern",         help="pattern to draw",                 action="store", type=str,   dest="pattern",         default="square")
 parser.add_option("-g", "--genotypes",       help="the number of genotypes",         action="store", type=int,   dest="genotypes",       default=10)
-parser.add_option("-c", "--circles",         help="the number of circles",           action="store", type=int,   dest="circles",         default=10)
 parser.add_option("-i", "--iteration_limit", help="limit the number of generations", action="store", type=int,   dest="max_generations", default=10)
-parser.add_option("-t", "--time_limit",      help="time limit in seconds",           action="store", type=int,   dest="time_limit",      default=False)
 parser.add_option("-m", "--mutation_chance", help="the mutation probability",        action="store", type=float, dest="mutation_chance", default=0.1)
 parser.add_option("-a", "--always_best",     help="the fittest always breed",        action="store_true",        dest="always_best",     default=False)
 parser.add_option("-l", "--parents_live",    help="the fittest always survive",      action="store_true",        dest="parents_live",    default=False)
@@ -16,52 +15,50 @@ parser.add_option("-v", "--verbose",         help="turn on verbose mode",       
 (options, args) = parser.parse_args()
 if options.verbose:
     print "run  : --- Options"
+    print "run  :     width:                    ",options.width 
+    print "run  :     height:                   ",options.height
     print "run  :     pattern:                  ",options.pattern
     print "run  :     n genotypes:              ",options.genotypes
-    print "run  :     n circles:                ",options.circles
-    print "run  :     time limit [s]:           ",options.time_limit
     print "run  :     maximum generations:      ",options.max_generations
     print "run  :     mutation probability:     ",options.mutation_chance
     print "run  :     fittest always survives:  ",options.always_best
-    print "run  :     suffix:                   ",options.suffix
     print "run  :     verbose:                  ",options.verbose
 ###################
 import Canvas
 import FitnessMeasures
-import Circle
+import Line
 import Population
 import Tools
 import time
 ###################
-if options.pattern == "jess":
-  print "run  : Drawing a 256 Jess on the board"
-  options.width  = 256
-  options.height = 256
-  canvas = Canvas.Canvas(options.width,options.height,image="Image.bmp")
-  colour_scale   = 1
-elif options.pattern == "jess_128":
-  print "run  : Drawing a 128 Jess on the board"
-  options.width  = 128
-  options.height = 128
-  canvas = Canvas.Canvas(options.width,options.height,image="Image_128.bmp")
-  colour_scale   = 2
+print "run  : generating an empty canvas"
+canvas = Canvas.Canvas(options.width,options.height)
+if options.pattern == "square":
+  print "run  : Drawing a square on the board"
+  canvas.add_line(Line.Line(10,10,                              options.width-10,10))
+  canvas.add_line(Line.Line(options.width-10,10,                options.width-10,options.height-10))
+  canvas.add_line(Line.Line(options.width-10,options.height-10, 10,options.height-10))
+  canvas.add_line(Line.Line(10,options.height-10,               10,10))
+  n_lines = 4
 else:
   assert False, "Invalid pattern requested: %s"%options.pattern
 
+file_name = "/zinc/web/copernicium/04/images/ideal.bmp"
+canvas.save(file_name)
+print "run  : Saved target canvas as: %s"%file_name
 print "run  : Generating fitness measure"
 fitness = FitnessMeasures.CanvasFitnessMeasure(canvas)
 
-bases   = Tools.MinBases(options.width)
+bases   = Tools.MinBases(max(options.width,options.height))
 print "run  : max dimension: %i, bases: %i (2^%i = %i)"%(max(options.width,options.height),bases,bases,2**bases)
 print "run  : --- Generate a population"
 population = \
  Population.Population(fitness,
                        n_genotypes=options.genotypes,
-                       n_genes=6*options.circles,
+                       n_genes=4*n_lines,
                        n_bases=bases,
                        mutation_chance=options.mutation_chance,
                        always_best=options.always_best,
-                       colour_scale=colour_scale,
                        verbose=options.verbose)
 generation = 0
 evolution  = []
@@ -70,22 +67,20 @@ print "run  : --- Running"
 ga_start = time.time()
 while(True):
     generation +=1
-    dt = time.time() - ga_start
-    if ((options.max_generations != -1) and (generation > options.max_generations)) or\
-       (options.time_limit and (dt > options.time_limit)): break
+    if (options.max_generations != -1) and (generation > options.max_generations): break
     
-    if options.verbose or (generation%10 == 0):
+    if options.verbose or (generation%100 == 0):
         best_result = max(population.fitness)
-        print "run  :     generation[%i], best result: %.1f, time: %.1f s"%(generation,best_result,dt)
+        print "run  :     generation[%i], best result: %.1f"%(generation,best_result)
         # print population
 
     if options.verbose: print "run  :     selecting fittest"
     fittest = population.select_fittest(force_always_best=True)[0]
     best_canvas = population.generate_canvas(fittest)
-    #evolution.append((fittest,
-    #                  max(population.fitness),
-    #                  best_canvas,
-    #                  fittest.genes))
+    evolution.append((fittest,
+                      max(population.fitness),
+                      best_canvas,
+                      fittest.genes))
     # if (best_result > threshold): break
 
     if options.verbose: print "run  :     fittest: %s"%(fittest.name)
@@ -93,15 +88,15 @@ while(True):
     population.eval()
     
 ga_end = time.time()
-# print population
+print population
 best_result = max(population.fitness)
 fittest = population.select_fittest(force_always_best=True)[0]
 best_canvas = population.generate_canvas(fittest)
 coding_used = fittest.genes
-print "run  : final generation[%i], best result: %.1f"%(generation, best_result)
-# print "run  : solution: %s"%repr(fittest)
-# print "run  :           ",coding_used
-# print "run  :           ",best_canvas
+print "run  : final generation[%i], best result: %f"%(generation, best_result)
+print "run  : solution: %s"%repr(fittest)
+print "run  :           ",coding_used
+print "run  :           ",best_canvas
 print "run  : time taken: %.2f s"%(ga_end-ga_start)
 # # ###################
 # # print "run  : --- Brute force problem solving"
@@ -112,7 +107,7 @@ print "run  : time taken: %.2f s"%(ga_end-ga_start)
 # # print "run  : time taken: %.2f s"%(brute_end-brute_start)
 ###################
 print "test : --- Best canvas to file"
-file_name = "/zinc/web/copernicium/05/images/test_%s.bmp"%options.suffix
+file_name = "/zinc/web/copernicium/04/images/test.bmp"
 best_canvas.save(file_name)
 
 # print "run  : --- Write path to file"
