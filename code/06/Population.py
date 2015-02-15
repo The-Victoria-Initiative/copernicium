@@ -1,5 +1,5 @@
 class Population():
-    from CirclesGenotype import CirclesGenotype
+    from PixelsGenotype import PixelsGenotype
     from Canvas import Canvas
     from Gene import Gene
     from random import random, shuffle
@@ -9,8 +9,8 @@ class Population():
                  n_genotypes=8, n_genes=4, n_bases=5, 
                  always_best=False, 
                  parents_live=True,
-                 mutation_chance=0.2, 
-                 colour_scale=1,
+                 mutation_chance=0.2,
+                 n_pixels=16,
                  verbose=True):
         # Parameters
         self.verbose         = verbose
@@ -21,12 +21,12 @@ class Population():
         self.always_best     = always_best
         self.parents_live    = parents_live
         self.mutation_chance = mutation_chance
-        self.colour_scale    = colour_scale
+        self.n_pixels        = n_pixels
         # Counters etc
         self.generation      = 0
         self.fitness         = []
         self.fitness_pairs   = []
-        self.circles         = []
+        self.pixels         = []
         self.generate_population()
         self.eval()
         while (max(self.fitness) <= (1. / 1e12)):
@@ -38,22 +38,23 @@ class Population():
         genotypes = []
         self.fitness         = []
         self.fitness_pairs   = []
-        self.circles          = []
+        self.pixels          = []
         for i in range(self.n_genotypes):
-            genotypes.append(self.CirclesGenotype(n_genes=self.n_genes, n_bases=self.n_bases, name="0.%i"%i, colour_scale=self.colour_scale))
+            genotypes.append(self.PixelsGenotype(n_genes=self.n_genes, n_bases=self.n_bases, name="0.%i"%i))
             self.fitness.append(1./1e12)
             self.fitness_pairs.append(0)
-            self.circles.append([])
+            self.pixels.append([])
         self.genotypes = genotypes
     
     def eval(self):
         for i in range(self.n_genotypes):
-            self.circles[i] = self.genotypes[i].eval()
+            self.pixels[i] = self.genotypes[i].eval()
             blank_canvas = self.Canvas(self.fitness_measure.canvas.width,
-                                       self.fitness_measure.canvas.height)
-            for circle in self.circles[i]:
-                blank_canvas.add_circle(circle)
-            self.fitness[i] = self.fitness_measure.eval(blank_canvas)
+                                       self.fitness_measure.canvas.height,
+                                       n_pixels=self.n_pixels)
+            for pixel in self.pixels[i]:
+                blank_canvas.add_pixel_summary(pixel)
+            self.fitness[i] = self.fitness_measure.eval_summary(blank_canvas)
             self.fitness_pairs[i] = (self.fitness[i],i)
 
     def select_fittest(self,force_always_best=False):
@@ -77,11 +78,12 @@ class Population():
         return self.genotypes[first_candidate], self.genotypes[second_candidate]
 
     def generate_canvas(self,genotype):
-        circles = genotype.eval(rainbow=True)
+        pixels = genotype.eval()
         blank_canvas = self.Canvas(self.fitness_measure.canvas.width,
-                                   self.fitness_measure.canvas.height)
-        for circle in circles:
-            blank_canvas.add_circle(circle)
+                                   self.fitness_measure.canvas.height,
+                                   n_pixels=self.n_pixels)
+        for pixel in pixels:
+            blank_canvas.add_pixel(pixel)
         return blank_canvas
 
     def pick_candidate(self):

@@ -28,7 +28,7 @@ class Genotype():
             # print i
             self.genes[i].mutate(mutation_chance=mutation_chance)
 
-    def numerical_mutate(self,mutation_chance=0.2,width=10,relative_width=False):
+    def numerical_mutate(self,mutation_chance=0.2,width=50,relative_width=False):
         for i in range(len(self.genes)):
             # print i
             self.genes[i].numerical_mutate(mutation_chance=mutation_chance,width=width,relative_width=relative_width)
